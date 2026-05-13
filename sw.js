@@ -1,0 +1,4 @@
+var C='xb-v1';
+self.addEventListener('install',function(e){e.waitUntil(caches.open(C).then(function(c){return c.addAll(['./','./index.html','./manifest.json'])}).then(function(){return self.skipWaiting()}))});
+self.addEventListener('activate',function(e){e.waitUntil(caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k!==C}).map(function(k){return caches.delete(k)}))}).then(function(){return self.clients.claim()}))});
+self.addEventListener('fetch',function(e){if(e.request.method!=='GET')return;if(e.request.url.indexOf('/chat/completions')>-1||e.request.url.indexOf('/images/generations')>-1)return;e.respondWith(fetch(e.request).then(function(r){if(r.ok){var cl=r.clone();caches.open(C).then(function(c){return c.put(e.request,cl)})}return r}).catch(function(){return caches.match(e.request)}))});

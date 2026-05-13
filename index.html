@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>小宝AI</title>
+<meta name="description" content="小宝AI - 企业级多模型聚合智能平台">
+<meta name="theme-color" content="#08080e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="小宝AI">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#08080e;--bg2:#0c0c16;--bg3:#12121f;--bg4:#1a1a2e;--bg5:#22223a;--glass:rgba(255,255,255,.025);--border:rgba(255,255,255,.06);--accent:#00c8ff;--accent2:#8b5cf6;--accent3:#f43f5e;--accent4:#22c55e;--grad:linear-gradient(135deg,#00c8ff,#8b5cf6);--glow:rgba(0,200,255,.12);--t1:#eeeef4;--t2:#9898b0;--t3:#58586e;--r:12px;--r2:16px;--font:'Noto Sans SC',sans-serif;--mono:'JetBrains Mono',monospace;--display:'Syne',sans-serif;--sat:env(safe-area-inset-top);--sab:env(safe-area-inset-bottom)}
+html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--font);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow:hidden;overscroll-behavior:none}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.06);border-radius:10px}
+::selection{background:rgba(0,200,255,.25)}
+#ib{position:fixed;top:0;left:0;right:0;z-index:10000;background:var(--bg3);border-bottom:1px solid var(--border);padding:12px 16px;padding-top:calc(12px + var(--sat));display:none;align-items:center;gap:12px}
+#ib.show{display:flex}
+.ib-i{width:40px;height:40px;border-radius:10px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;font-family:var(--display);flex-shrink:0}
+.ib-t{flex:1}.ib-t h4{font-size:14px}.ib-t p{font-size:11px;color:var(--t3)}
+.ib-b{padding:8px 16px;border:none;border-radius:8px;background:var(--grad);color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);flex-shrink:0}
+.ib-x{padding:8px;background:none;border:none;color:var(--t3);font-size:18px;cursor:pointer}
+#splash{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:all .6s}
+#splash.out{opacity:0;visibility:hidden;pointer-events:none}
+.so{width:90px;height:90px;border-radius:50%;background:var(--grad);animation:sp 2s ease-in-out infinite}
+@keyframes sp{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+.st2{font-family:var(--display);font-size:34px;font-weight:800;margin-top:24px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;opacity:0;animation:fu .5s .3s forwards}
+.ss2{font-size:13px;color:var(--t3);margin-top:6px;letter-spacing:3px;opacity:0;animation:fu .5s .5s forwards}
+.sv2{font-size:11px;color:var(--t3);margin-top:12px;opacity:0;animation:fu .5s .7s forwards;font-family:var(--mono)}
+@keyframes fu{to{opacity:1;transform:translateY(0)}from{opacity:0;transform:translateY(14px)}}
+#lp{position:fixed;inset:0;z-index:9998;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
+#lp.show{display:flex}
+.lc{width:100%;max-width:400px}
+.lc .br{display:flex;align-items:center;gap:12px;margin-bottom:32px;justify-content:center}
+.lc .bi{width:44px;height:44px;border-radius:14px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:20px;color:#fff}
+.lc h1{font-family:var(--display);font-size:26px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.lc .ls{text-align:center;color:var(--t2);font-size:13px;margin-bottom:28px}
+.lt{display:flex;gap:4px;background:var(--bg3);padding:4px;border-radius:var(--r);margin-bottom:20px}
+.ltab{flex:1;padding:10px;text-align:center;border-radius:8px;font-size:13px;color:var(--t2);cursor:pointer;transition:.15s}
+.ltab.on{background:var(--bg5);color:var(--t1);font-weight:500}
+.lf{margin-bottom:14px}
+.lf label{display:block;font-size:11px;color:var(--t3);margin-bottom:5px;font-family:var(--mono);text-transform:uppercase;letter-spacing:1px}
+.li{width:100%;padding:12px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);color:var(--t1);font-size:15px;font-family:var(--font);outline:none;transition:.2s}
+.li:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow)}
+.li::placeholder{color:var(--t3)}
+.lr{display:flex;gap:10px;align-items:flex-end}.lr .lf{flex:1;margin-bottom:0}
+.sb{padding:12px 16px;background:var(--bg4);border:1px solid var(--border);border-radius:var(--r);color:var(--accent);font-size:13px;cursor:pointer;white-space:nowrap;min-width:110px;text-align:center;font-family:var(--font);transition:.15s}
+.sb:disabled{opacity:.4}
+.lb{width:100%;padding:13px;border:none;border-radius:var(--r);background:var(--grad);color:#fff;font-size:15px;font-weight:600;cursor:pointer;margin-top:8px;font-family:var(--font)}
+.lft{display:flex;justify-content:space-between;margin-top:16px;font-size:12px}
+.lft a{color:var(--t3);cursor:pointer}
+.le{color:var(--accent3);font-size:12px;margin-top:8px;display:none;text-align:center}
+#app{display:none;height:100vh;height:100dvh;flex-direction:column}
+#app.show{display:flex}
+#ah{height:52px;min-height:52px;padding-top:var(--sat);background:rgba(8,8,14,.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding-left:14px;padding-right:14px;gap:10px;z-index:50}
+.hb{background:none;border:none;color:var(--t2);font-size:20px;cursor:pointer;padding:4px;display:none}
+.ht{font-family:var(--display);font-size:17px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hd{font-family:var(--mono);font-size:11px;color:var(--accent);background:var(--glow);border:1px solid rgba(0,200,255,.12);padding:3px 8px;border-radius:20px}
+.hsp{flex:1}
+.hk{font-family:var(--mono);font-size:11px;color:var(--accent4);background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.15);padding:3px 10px;border-radius:20px;cursor:pointer}
+.ha{width:32px;height:32px;border-radius:10px;background:var(--bg4);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer}
+#bd{flex:1;display:flex;overflow:hidden}
+#ct{flex:1;overflow:hidden;position:relative;display:flex;flex-direction:column}
+.v{display:none;flex:1;flex-direction:column;overflow:hidden}
+.v.on{display:flex}
+#vh{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px}
+.hg{font-family:var(--display);font-size:24px;font-weight:700;text-align:center;padding:20px 0 4px}
+.hg span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hgd{font-size:13px;color:var(--t3);text-align:center}
+.sts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px auto;max-width:500px}
+.stc{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:14px;text-align:center}
+.stn{font-family:var(--display);font-size:22px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stl{font-size:11px;color:var(--t3);margin-top:2px}
+.sec{font-size:13px;color:var(--t3);font-family:var(--mono);text-transform:uppercase;letter-spacing:2px;margin:24px 0 12px;display:flex;align-items:center;gap:8px}
+.sec::after{content:"";flex:1;height:1px;background:var(--border)}
+.fg{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px;max-width:700px;margin:0 auto}
+.fc{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:18px 14px;cursor:pointer;transition:.2s;text-align:center;-webkit-tap-highlight-color:transparent}
+.fc:active{transform:scale(.97)}
+.fc:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 6px 24px var(--glow)}
+.fi{font-size:28px;margin-bottom:8px;display:block}
+.fn{font-size:13px;font-weight:500}.fd{font-size:11px;color:var(--t3);margin-top:3px}
+.csb{display:flex;border-bottom:1px solid var(--border);background:var(--bg2);overflow-x:auto;-webkit-overflow-scrolling:touch;padding:0 10px;scrollbar-width:none}
+.csb::-webkit-scrollbar{display:none}
+.csb button{padding:10px 16px;background:none;border:none;color:var(--t3);font-size:12px;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:.15s;font-family:var(--font);-webkit-tap-highlight-color:transparent}
+.csb button.on{color:var(--accent);border-bottom-color:var(--accent)}
+.cc{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.cw{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;padding:24px;text-align:center}
+.cw.hide{display:none}
+.cwi{width:64px;height:64px;border-radius:20px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:16px;box-shadow:0 8px 36px var(--glow)}
+.cwd{font-family:var(--display);font-size:24px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px}
+.cws{color:var(--t3);font-size:13px;margin-bottom:24px}
+.cchips{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;max-width:600px;width:100%}
+.cchip{padding:12px 14px;border:1px solid var(--border);border-radius:var(--r);background:var(--glass);color:var(--t2);font-size:13px;cursor:pointer;text-align:left;transition:.2s;line-height:1.5;-webkit-tap-highlight-color:transparent}
+.cchip:active{background:var(--glow)}
+.cchip:hover{border-color:var(--accent);color:var(--t1);background:var(--glow)}
+#cm{padding:16px 0;display:none}
+#cm.on{display:block}
+.m{padding:5px 0;opacity:0;animation:mi .3s ease forwards}
+@keyframes mi{to{opacity:1;transform:translateY(0)}from{opacity:0;transform:translateY(10px)}}
+.mi{max-width:780px;margin:0 auto;padding:0 16px;display:flex;gap:10px}
+.m.u .mi{flex-direction:row-reverse}
+.ma{width:32px;height:32px;min-width:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;font-family:var(--display);margin-top:2px}
+.m.a .ma{background:var(--grad);color:#fff}
+.m.u .ma{background:var(--bg4);color:var(--t2);border:1px solid var(--border)}
+.mb{flex:1;min-width:0}
+.mm{font-size:10px;color:var(--t3);margin-bottom:3px}
+.m.u .mm{text-align:right}
+.mc{font-size:14.5px;line-height:1.75;word-break:break-word}
+.m.u .mc{background:var(--bg4);border:1px solid var(--border);border-radius:var(--r2) var(--r2) 4px var(--r2);padding:10px 14px;display:inline-block;float:right;max-width:100%}
+.mc p{margin-bottom:10px}.mc p:last-child{margin-bottom:0}
+.mc strong{color:#fff;font-weight:600}
+.mc ul,.mc ol{margin:8px 0;padding-left:20px}.mc li{margin-bottom:3px}
+.mc h1,.mc h2,.mc h3{margin:14px 0 6px;color:#fff;font-family:var(--display);font-weight:700}
+.mc h1{font-size:19px}.mc h2{font-size:16px}.mc h3{font-size:14px}
+.mc blockquote{border-left:3px solid var(--accent);padding:6px 14px;margin:8px 0;background:rgba(0,200,255,.03);border-radius:0 8px 8px 0;color:var(--t2)}
+.mc hr{border:none;border-top:1px solid var(--border);margin:14px 0}
+.mc table{width:100%;border-collapse:collapse;margin:8px 0;font-size:13px}
+.mc th,.mc td{border:1px solid var(--border);padding:6px 10px;text-align:left}
+.mc th{background:var(--bg4);font-weight:600}
+.mc pre{position:relative;margin:8px 0;border-radius:var(--r);overflow:hidden;border:1px solid var(--border);background:#0d1117!important}
+.ch{display:flex;align-items:center;justify-content:space-between;padding:6px 12px;background:rgba(255,255,255,.025);border-bottom:1px solid var(--border)}
+.cl{font-family:var(--mono);font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1px}
+.cb{background:none;border:1px solid var(--border);color:var(--t3);font-size:10px;padding:2px 8px;border-radius:6px;cursor:pointer;font-family:var(--mono);transition:.15s;-webkit-tap-highlight-color:transparent}
+.cb:hover{border-color:var(--accent);color:var(--accent)}
+.mc pre code{display:block;padding:12px;font-family:var(--mono);font-size:12.5px;line-height:1.6;overflow-x:auto;background:transparent!important}
+.mc code:not(pre code){font-family:var(--mono);font-size:12.5px;background:rgba(255,255,255,.04);padding:2px 5px;border-radius:4px;color:var(--accent)}
+.ds{display:inline-flex;gap:4px;padding:6px 0}.ds i{width:6px;height:6px;border-radius:50%;background:var(--accent);opacity:.3;animation:dp 1.2s ease-in-out infinite}
+.ds i:nth-child(2){animation-delay:.15s}.ds i:nth-child(3){animation-delay:.3s}
+@keyframes dp{0%,80%,100%{opacity:.3;transform:scale(.8)}40%{opacity:1;transform:scale(1.1)}}
+.blink::after{content:"\25CA";color:var(--accent);animation:bl 1s step-end infinite;font-size:14px}
+@keyframes bl{50%{opacity:0}}
+.ciw{padding:8px 12px 12px;padding-bottom:calc(8px + var(--sab));background:linear-gradient(to top,var(--bg) 50%,transparent)}
+.cib{max-width:780px;margin:0 auto;display:flex;align-items:flex-end;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:8px 8px 8px 14px;transition:.2s}
+.cib:focus-within{border-color:rgba(0,200,255,.3);box-shadow:0 0 20px var(--glow)}
+#ci{flex:1;background:transparent;border:none;outline:none;color:var(--t1);font-size:15px;line-height:1.5;resize:none;max-height:150px;min-height:24px;font-family:var(--font)}
+#ci::placeholder{color:var(--t3)}
+.snd{width:38px;height:38px;min-width:38px;border-radius:var(--r);border:none;background:var(--grad);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;opacity:.35}
+.snd.on{opacity:1}
+#sbp{padding:5px 12px;border:1px solid var(--accent3);border-radius:8px;background:rgba(244,63,94,.06);color:var(--accent3);font-size:11px;cursor:pointer;display:none;align-items:center;gap:4px;font-family:var(--font);-webkit-tap-highlight-color:transparent}
+#sbp.on{display:flex}
+.gw{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px;max-width:900px;margin:0 auto;width:100%}
+.gs{display:grid;gap:10px;margin:12px 0}
+.gs label{display:block;font-size:11px;color:var(--t3);margin-bottom:4px;font-family:var(--mono);text-transform:uppercase;letter-spacing:1px}
+.gs select{width:100%;padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--t1);font-size:13px;font-family:var(--font);outline:none;appearance:none;cursor:pointer}
+.ta{min-height:100px;padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);margin:12px 0}
+.ta textarea{width:100%;background:transparent;border:none;outline:none;color:var(--t1);font-size:14px;resize:none;min-height:70px;font-family:var(--font)}
+.ta textarea::placeholder{color:var(--t3)}
+.ar{display:flex;gap:10px;align-items:center;margin-bottom:20px;flex-wrap:wrap}
+.ir{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.ic{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
+.ic img{width:100%;display:block;aspect-ratio:1;object-fit:cover;background:var(--bg4)}
+.ic .ia{padding:10px;display:flex;justify-content:flex-end;gap:8px}
+.ic .ia button{padding:5px 12px;background:var(--bg4);border:1px solid var(--border);border-radius:6px;color:var(--t2);font-size:11px;cursor:pointer;font-family:var(--font)}
+.wtypes,.cmds{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.wt,.cmd{padding:7px 14px;border:1px solid var(--border);border-radius:20px;background:transparent;color:var(--t2);font-size:12px;cursor:pointer;transition:.15s;font-family:var(--font);-webkit-tap-highlight-color:transparent}
+.wt.on,.cmd.on{background:var(--glow);border-color:var(--accent);color:var(--accent)}
+.wf{margin-bottom:14px}
+.wf label{display:block;font-size:11px;color:var(--t3);margin-bottom:4px;font-family:var(--mono);letter-spacing:1px}
+.wf textarea,.wf input,.wf select{width:100%;padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--t1);font-size:14px;font-family:var(--font);outline:none;transition:.2s;resize:vertical}
+.wf textarea:focus,.wf input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow)}
+.wr,.cout,.fr{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-top:16px;min-height:80px;line-height:1.8;font-size:14.5px}
+.wr:empty::before,.cout:empty::before,.fr:empty::before{content:"结果将显示在这里...";color:var(--t3)}
+.tlr{display:flex;gap:10px;align-items:center;margin-bottom:14px;justify-content:center}
+.tlr select{padding:8px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--t1);font-size:13px;font-family:var(--font);outline:none;cursor:pointer}
+.tsw{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--bg3);color:var(--t2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;-webkit-tap-highlight-color:transparent}
+.tpls{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tpl{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.tpl textarea{width:100%;min-height:160px;padding:14px;background:transparent;border:none;outline:none;color:var(--t1);font-size:14.5px;resize:none;font-family:var(--font);line-height:1.7}
+.tpl textarea::placeholder{color:var(--t3)}
+.tpl .tb{padding:8px 14px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.tpl .tb span{font-size:11px;color:var(--t3);font-family:var(--mono)}
+.tpl .tb button{background:none;border:none;color:var(--t2);font-size:12px;cursor:pointer;padding:4px 8px}
+.cia{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:14px}
+.cia textarea{width:100%;min-height:130px;padding:14px;background:transparent;border:none;outline:none;color:var(--t1);font-size:13.5px;font-family:var(--mono);resize:vertical;line-height:1.6}
+.sw2{display:flex;gap:10px;margin-bottom:20px}
+.sw2 input{flex:1;padding:13px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);color:var(--t1);font-size:15px;font-family:var(--font);outline:none;transition:.2s}
+.sw2 input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow)}
+.sr{line-height:1.8;font-size:14.5px}
+.fdrop{border:2px dashed var(--border);border-radius:var(--r2);padding:36px;text-align:center;cursor:pointer;transition:.2s;margin-bottom:16px;-webkit-tap-highlight-color:transparent}
+.fdrop:active{border-color:var(--accent);background:var(--glow)}
+.fdrop .fdi{font-size:40px;margin-bottom:10px}
+.fdrop p{color:var(--t2);font-size:14px}
+.fdrop .fdh{font-size:11px;color:var(--t3);margin-top:4px}
+.finfo{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;margin-bottom:12px;display:none;align-items:center;gap:10px}
+.finfo.show{display:flex}
+.finfo .fn2{flex:1;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.finfo .fs2{font-size:11px;color:var(--t3);font-family:var(--mono);flex-shrink:0}
+.finfo .fx{background:none;border:none;color:var(--t3);cursor:pointer;font-size:16px;flex-shrink:0}
+.fq{margin-bottom:12px}
+.fq textarea{width:100%;padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);color:var(--t1);font-size:14px;font-family:var(--font);outline:none;resize:none;min-height:60px;transition:.2s}
+.fq textarea:focus{border-color:var(--accent)}
+.pc{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:24px;text-align:center;margin-bottom:16px}
+.pa{width:72px;height:72px;border-radius:22px;background:var(--grad);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:28px;font-family:var(--display);font-weight:800;color:#fff}
+.pn{font-size:18px;font-weight:600;margin-bottom:2px}
+.pp{font-size:13px;color:var(--t3);font-family:var(--mono)}
+.pv{display:inline-block;margin-top:8px;padding:4px 14px;border-radius:20px;font-size:11px;font-weight:600;background:rgba(255,255,255,.04);color:var(--t3);border:1px solid var(--border)}
+.ptc{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:18px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+.ptc .pl{font-size:12px;color:var(--t3)}.ptc .pn2{font-family:var(--display);font-size:28px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.pm{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
+.pmi{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;transition:.15s;border-bottom:1px solid var(--border);-webkit-tap-highlight-color:transparent}
+.pmi:last-child{border-bottom:none}
+.pmi:active{background:rgba(255,255,255,.03)}
+.pmi .pi{font-size:18px;width:24px;text-align:center}
+.pmi .pt{flex:1;font-size:14px}
+.pmi .pa2{color:var(--t3);font-size:12px}
+.pmi .pb{font-size:10px;padding:2px 8px;border-radius:10px;background:var(--glow);color:var(--accent);font-family:var(--mono)}
+.ss{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:18px;margin-bottom:14px}
+.ss h3{font-size:13px;color:var(--t3);font-family:var(--mono);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px}
+.sf{margin-bottom:14px}.sf:last-child{margin-bottom:0}
+.sf label{display:block;font-size:11px;color:var(--t3);margin-bottom:4px;font-family:var(--mono);letter-spacing:.5px}
+.sf input,.sf select,.sf textarea{width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--t1);font-size:13px;font-family:var(--font);outline:none;transition:.2s}
+.sf input:focus,.sf select:focus,.sf textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow)}
+.sf textarea{resize:vertical;min-height:70px}
+.sf .hn{font-size:11px;color:var(--t3);margin-top:3px}
+.pvt{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
+.pvtb{padding:5px 12px;border:1px solid var(--border);border-radius:20px;background:transparent;color:var(--t2);font-size:11px;cursor:pointer;transition:.15s;font-family:var(--font);-webkit-tap-highlight-color:transparent}
+.pvtb.on{background:var(--glow);border-color:var(--accent);color:var(--accent)}
+.sa{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.gb{padding:10px 24px;border:none;border-radius:var(--r);background:var(--grad);color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font);transition:.2s;-webkit-tap-highlight-color:transparent}
+.gb:active{transform:scale(.97)}.gb:disabled{opacity:.4;cursor:default;transform:none}
+.bp{padding:10px 20px;border:none;border-radius:8px;background:var(--grad);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font)}
+.bg2{padding:10px 20px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--t2);font-size:13px;cursor:pointer;font-family:var(--font)}
+.bd{padding:10px 20px;border:1px solid rgba(244,63,94,.2);border-radius:8px;background:transparent;color:var(--accent3);font-size:13px;cursor:pointer;font-family:var(--font)}
+#bn{display:flex;border-top:1px solid var(--border);background:rgba(8,8,14,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);height:calc(56px + var(--sab));min-height:56px;padding-bottom:var(--sab)}
+.bi{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;color:var(--t3);position:relative;-webkit-tap-highlight-color:transparent;transition:.15s}
+.bi.on{color:var(--accent)}
+.bi .bii{font-size:20px;line-height:1}.bi .bil{font-size:10px}
+.bi.on::after{content:"";position:absolute;top:0;left:30%;right:30%;height:2px;background:var(--grad);border-radius:0 0 2px 2px}
+#toast{position:fixed;bottom:calc(80px + var(--sab));left:50%;transform:translateX(-50%) translateY(16px);padding:9px 18px;background:var(--bg4);border:1px solid var(--border);border-radius:10px;font-size:13px;z-index:5000;opacity:0;transition:.3s;pointer-events:none;white-space:nowrap;max-width:90vw}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.ok{border-color:rgba(34,197,94,.3);color:var(--accent4)}
+#toast.err{border-color:rgba(244,63,94,.3);color:var(--accent3)}
+@media(max-width:768px){.tpls{grid-template-columns:1fr}.fg{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}.mi{padding:0 10px}.cchips{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div id="ib">
+  <div class="ib-i">宝</div>
+  <div class="ib-t"><h4>安装小宝AI</h4><p>添加到桌面获得原生体验</p></div>
+  <button class="ib-b" onclick="doInstall()">安装</button>
+  <button class="ib-x" onclick="el('ib').classList.remove('show')">&times;</button>
+</div>
+
+<div id="splash">
+  <div class="so"></div>
+  <div class="st2">小宝 AI</div>
+  <div class="ss2">XIAOBAO AI</div>
+  <div class="sv2">v1.0 · 企业级多模型平台</div>
+</div>
+
+<div id="lp">
+  <div class="lc">
+    <div class="br"><div class="bi">宝</div><h1>小宝AI</h1></div>
+    <p class="ls">登录后解锁全部 AI 能力</p>
+    <div class="lt">
+      <div class="ltab on" onclick="lTab(0)">验证码登录</div>
+      <div class="ltab" onclick="lTab(1)">密码登录</div>
+    </div>
+    <div id="lsms">
+      <div class="lf"><label>手机号</label><input class="li" type="tel" id="sp" placeholder="请输入手机号" maxlength="11" inputmode="numeric"></div>
+      <div class="lr">
+        <div class="lf"><label>验证码</label><input class="li" type="text" id="sc" placeholder="验证码" maxlength="6" inputmode="numeric"></div>
+        <button class="sb" id="smbtn" onclick="sendSms()">获取验证码</button>
+      </div>
+    </div>
+    <div id="lpw" style="display:none">
+      <div class="lf"><label>手机号</label><input class="li" type="tel" id="pp" placeholder="请输入手机号" maxlength="11" inputmode="numeric"></div>
+      <div class="lf"><label>密码</label><input class="li" type="password" id="pw" placeholder="请输入密码"></div>
+    </div>
+    <button class="lb" onclick="doLogin()">登 录</button>
+    <div class="le" id="lerr"></div>
+    <div class="lft"><a onclick="toast('注册功能即将上线')">注册账号</a><a onclick="toast('请联系管理员重置密码')">忘记密码？</a></div>
+  </div>
+</div>
+
+<div id="app">
+  <div id="ah">
+    <button class="hb" id="hback" onclick="goV('home')">←</button>
+    <span class="ht">小宝AI</span>
+    <span class="hd" id="hmod">deepseek-chat</span>
+    <div class="hsp"></div>
+    <span class="hk" onclick="goV('profile')">⚡ <span id="htk">9,999</span></span>
+    <div class="ha" onclick="goV('profile()">👤</div>
+  </div>
+  <div id="bd"><div id="ct">
+
+    <div class="v on" id="v-home">
+      <div id="vh">
+        <div class="hg">你好，<span id="gn">小宝用户</span></div>
+        <div class="hgd" id="gd"></div>
+        <div class="sts">
+          <div class="stc"><div class="stn" id="sc1">0</div><div class="stl">对话次数</div></div>
+          <div class="stc"><div class="stn" id="sc2">9,999</div><div class="stl">剩余Token</div></div>
+          <div class="stc"><div class="stn" id="sc3">1</div><div class="stl">使用天数</div></div>
+        </div>
+        <div class="sec">AI 工具箱</div>
+        <div class="fg">
+          <div class="fc" onclick="goV('chat')"><span class="fi">💬</span><div class="fn">AI 对话</div><div class="fd">多模型智能问答</div></div>
+          <div class="fc" onclick="goV('image')"><span class="fi">🎨</span><div class="fn">AI 绘画</div><div class="fd">文字生成图片</div></div>
+          <div class="fc" onclick="goV('write')"><span class="fi">✍️</span><div class="fn">AI 写作</div><div class="fd">文章/文案/营销</div></div>
+          <div class="fc" onclick="goV('trans')"><span class="fi">🌐</span><div class="fn">AI 翻译</div><div class="fd">多语言互译</div></div>
+          <div class="fc" onclick="goV('code')"><span class="fi">💻</span><div class="fn">AI 编程</div><div class="fd">代码生成/调试</div></div>
+          <div class="fc" onclick="goV('search')"><span class="fi">🔍</span><div class="fn">AI 搜索</div><div class="fd">智能问答搜索</div></div>
+          <div class="fc" onclick="goV('file')"><span class="fi">📄</span><div class="fn">文档分析</div><div class="fd">TXT/JSON/CSV/代码</div></div>
+          <div class="fc" onclick="goV('settings')"><span class="fi">⚙️</span><div class="fn">模型设置</div><div class="fd">API配置/切换</div></div>
+        </div>
+        <div class="sec" style="margin-top:28px">快速开始</div>
+        <div class="cchips">
+          <div class="cchip" onclick="qc(this)">帮我写一份商业计划书大纲</div>
+          <div class="cchip" onclick="qc(this)">用Python实现一个爬虫框架</div>
+          <div class="cchip" onclick="qc(this)">分析新能源汽车行业趋势</div>
+          <div class="cchip" onclick="qc(this)">翻译这段英文为中文</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="v" id="v-chat">
+      <div class="csb">
+        <button class="on" onclick="setCM(0)">💬 综合</button>
+        <button onclick="setCM(1)">🧠 推理</button>
+        <button onclick="setCM(2)">💻 编程</button>
+        <button onclick="setCM(3)">📝 创作</button>
+      </div>
+      <div class="cc" id="cc2">
+        <div class="cw" id="cw2">
+          <div class="cwi">💬</div>
+          <div class="cwd">智能对话</div>
+          <div class="cws">选择模型开始对话</div>
+          <div class="cchips">
+            <div class="cchip" onclick="qc(this)">解释量子纠缠原理</div>
+            <div class="cchip" onclick="qc(this)">写一首关于月光的诗</div>
+            <div class="cchip" onclick="qc(this)">设计一个电商App架构</div>
+            <div class="cchip" onclick="qc(this)">分析中美贸易影响</div>
+          </div>
+        </div>
+        <div id="cm"></div>
+      </div>
+      <div class="ciw">
+        <div class="cib">
+          <textarea id="ci" rows="1" placeholder="输入消息... (Enter发送)" oninput="aR(this);tS()" onkeydown="cK(event)"></textarea>
+          <button id="sbp" onclick="stopG()">■</button>
+          <button class="snd" id="snd" onclick="sendC()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="v" id="v-image">
+      <div class="gw">
+        <div class="sec" style="margin-top:0">🎨 AI 绘画</div>
+        <div class="ta"><textarea id="ipr" placeholder="描述你想要的图片..."></textarea></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0">
+          <div><label style="display:block;font-size:11px;color:var(--t3);margin-bottom:4px;font-family:var(--mono)">尺寸</label><select id="isz" style="width:100%;padding:10px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--t1);font-size:13px;font-family:var(--font);outline:none"><option>1024x1024</option><option>1792x1024</option><option>1024x1792</option></select></div>
+          <div><label style="display:block;font-size:11px;color:var(--t3);margin-bottom:4px;font-family:var(--mono)">风格</label><select id="ist" style="width:100%;padding:10px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--t1);font-size:13px;font-family:var(--font);outline:none"><option value="vivid">生动</option><option value="natural">自然</option></select></div>
+        </div>
+        <div class="ar"><button class="gb" id="igb" onclick="genImg()">🎨 生成图片</button><span style="font-size:12px;color:var(--t3)">消耗 100 Tokens</span></div>
+        <div class="ir" id="ires"></div>
+      </div>
+    </div>
+
+    <div class="v" id="v-write">
+      <div class="gw" style="max-width:800px">
+        <div class="sec" style="margin-top:0">✍️ AI 写作</div>
+        <div class="wtypes">
+          <span class="wt on" onclick="setWT(0)">📄 文章</span>
+          <span class="wt" onclick="setWT(1)">📢 营销</span>
+          <span class="wt" onclick="setWT(2)">📧 邮件</span>
+          <span class="wt" onclick="setWT(3)">📋 公文</span>
+          <span class="wt" onclick="setWT(4)">📱 小红书</span>
+          <span class="wt" onclick="setWT(5)">朋友圈</span>
+          <span class="wt" onclick="setWT(6)">📰 新闻</span>
+          <span class="wt" onclick="setWT(7)">📖 故事</span>
+        </div>
+        <div class="wf"><label>主题</label><input type="text" id="wtp" placeholder="输入写作主题..."></div>
+        <div class="wf"><label>要求</label><textarea id="wdesc" rows="3" placeholder="具体需求..."></textarea></div>
+        <div class="wf"><label>语言</label><select id="wlg"><option>中文</option><option>English</option><option>日本語</option></select></div>
+        <button class="gb" onclick="genW()">✍️ 开始写作</button>
+        <div class="wr" id="wres"></div>
+      </div>
+    </div>
+
+    <div class="v" id="v-trans">
+      <div class="gw">
+        <div class="sec" style="margin-top:0">🌐 AI 翻译</div>
+        <div class="tlr">
+          <select id="tf"><option>中文</option><option>English</option><option>日本語</option><option>한국어</option><option>Français</option><option>Deutsch</option></select>
+          <button class="tsw" onclick="swL()">⇄</button>
+          <select id="tt"><option>English</option><option>中文</option><option>日本語</option><option>한국어</option><option>Français</option><option>Deutsch</option></select>
+        </div>
+        <div class="tpls">
+          <div class="tpl"><textarea id="tin" placeholder="输入要翻译的文本..."></textarea><div class="tb"><span id="tcnt">0 字</span><button onclick="el('tin').value=''">清空</button></div></div>
+          <div class="tpl"><textarea id="tout" placeholder="翻译结果..." readonly></textarea><div class="tb"><span id="trl"></span><button onclick="cpT(el('tout').value)">复制</button></div></div>
+        </div>
+        <div class="ar" style="justify-content:center"><button class="gb" onclick="genT()">🌐 翻译</button></div>
+      </div>
+    </div>
+
+    <div class="v" id="v-code">
+      <div class="gw" style="max-width:800px">
+        <div class="sec" style="margin-top:0">💻 AI 编程</div>
+        <div class="cmds">
+          <span class="cmd on" onclick="setCD(0)">生成代码</span>
+          <span class="cmd" onclick="setCD(1)">解释代码</span>
+          <span class="cmd" onclick="setCD(2)">Debug</span>
+          <span class="cmd" onclick="setCD(3)">优化</span>
+          <span class="cmd" onclick="setCD(4)">转语言</span>
+          <span class="cmd" onclick="setCD(5)">写测试</span>
+        </div>
+        <div class="cia"><textarea id="cin" placeholder="描述代码功能或粘贴代码..."></textarea></div>
+        <div class="wf" style="margin-bottom:14px"><label>语言</label><select id="clg"><option>Python</option><option>JavaScript</option><option>TypeScript</option><option>Java</option><option>C++</option><option>Go</option><option>Rust</option><option>SQL</option><option>HTML/CSS</option></select></div>
+        <button class="gb" onclick="genC()">💻 执行</button>
+        <div class="cout" id="cout"></div>
+      </div>
+    </div>
+
+    <div class="v" id="v-search">
+      <div class="gw" style="max-width:800px">
+        <div class="sec" style="margin-top:0">🔍 AI 搜索</div>
+        <div class="sw2">
+          <input type="text" id="sin" placeholder="输入任何问题..." onkeydown="if(event.key==='Enter')genS()">
+          <button class="gb" onclick="genS()">搜索</button>
+        </div>
+        <div class="sr" id="sout"></div>
+      </div>
+    </div>
+
+    <div class="v" id="v-file">
+      <div class="gw" style="max-width:800px">
+        <div class="sec" style="margin-top:0">📄 文档分析</div>
+        <div class="fdrop" onclick="el('fin').click()">
+          <div class="fdi">📂</div>
+          <p>点击上传文档</p>
+          <div class="fdh">TXT, JSON, CSV, MD, 代码 (10MB)</div>
+          <input type="file" id="fin" style="display:none" accept=".txt,.json,.csv,.md,.js,.py,.html,.css,.xml,.log,.yaml,.yml" onchange="hFile(event)">
+        </div>
+        <div class="finfo" id="finfo"><span>📄</span><span class="fn2" id="fn2"></span><span class="fs2" id="fs2"></span><button class="fx" onclick="cFile()">&times;</button></div>
+        <div class="fq"><textarea id="fq" rows="2" placeholder="对文档提的问题（留空则总结）..."></textarea></div>
+        <button class="gb" onclick="genF()" style="margin-bottom:14px">📄 分析文档</button>
+        <div class="fr" id="fr"></div>
+      </div>
+    </div>
+
+    <div class="v" id="v-settings">
+      <div class="gw" style="max-width:600px">
+        <div class="sec" style="margin-top:0">⚙️ 模型设置</div>
+        <div class="ss"><h3>服务商</h3><div class="pvt" id="pvt"></div></div>
+        <div class="ss">
+          <h3>API 配置</h3>
+          <div class="sf"><label>API 地址</label><input type="url" id="surl" placeholder="https://api.example.com/v1"><div class="hn">OpenAI 兼容，末尾 /v1</div></div>
+          <div class="sf"><label>API Key</label><input type="password" id="skey" placeholder="sk-xxxxxxxx"></div>
+          <div class="sf"><label>模型</label><select id="smod"></select></div>
+          <div class="sf"><label>自定义模型</label><input type="text" id="scmod" placeholder="留空用上方选择"></div>
+        </div>
+        <div class="ss">
+          <h3>参数</h3>
+          <div class="sf"><label>系统提示词</label><textarea id="ssys">你是小宝AI，一个专业、友好的AI助手。请用中文回答。</textarea></div>
+          <div class="sf"><label>Temperature: <span id="tv">0.7</span></label><input type="range" id="stemp" min="0" max="2" step="0.1" value="0.7" style="accent-color:var(--accent)" oninput="el('tv').textContent=this.value"></div>
+        </div>
+        <div class="sa">
+          <button class="bp" onclick="saveC()">💾 保存</button>
+          <button class="bg2" onclick="testA()">🔗 测试</button>
+          <button class="bd" onclick="if(confirm('清除所有数据？')){localStorage.clear();location.reload()}">🗑 重置</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="v" id="v-profile">
+      <div class="gw" style="max-width:500px">
+        <div class="pc">
+          <div class="pa" id="pav">宝</div>
+          <div class="pn" id="pnm">小宝用户</div>
+          <div class="pp" id="pph">--</div>
+          <div class="pv">免费版</div>
+        </div>
+        <div class="ptc">
+          <div><div class="pl">剩余 Tokens</div><div class="pn2" id="ptk">9,999</div></div>
+          <button class="bp" onclick="toast('充值开发中')">充值</button>
+        </div>
+        <div class="pm">
+          <div class="pmi" onclick="goV('settings')"><span class="pi">⚙️</span><span class="pt">模型设置</span><span class="pa2">›</span></div>
+          <div class="pmi" id="instmi" style="display:none" onclick="doInstall()"><span class="pi">📲</span><span class="pt">安装到桌面</span><span class="pb">推荐</span><span class="pa2">›</span></div>
+          <div class="pmi" onclick="toast('记录保存在本地')"><span class="pi">📋</span><span class="pt">使用记录</span><span class="pa2">›</span></div>
+          <div class="pmi" onclick="toast('会员即将上线')"><span class="pi">👑</span><span class="pt">开通会员</span><span class="pa2">›</span></div>
+          <div class="pmi" onclick="toast('反馈已收到')"><span class="pi">💬</span><span class="pt">意见反馈</span><span class="pa2">›</span></div>
+          <div class="pmi" onclick="toast('小宝AI v1.0')"><span class="pi">ℹ️</span><span class="pt">关于我们</span><span class="pa2">›</span></div>
+          <div class="pmi" onclick="logout()" style="color:var(--accent3)"><span class="pi">🚪</span><span class="pt">退出登录</span><span class="pa2">›</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div></div>
+  <div id="bn">
+    <div class="bi on" data-v="home" onclick="goV('home')"><span class="bii">🏠</span><span class="bil">首页</span></div>
+    <div class="bi" data-v="chat" onclick="goV('chat')"><span class="bii">💬</span><span class="bil">对话</span></div>
+    <div class="bi" data-v="image" onclick="goV('image')"><span class="bii">🎨</span><span class="bil">绘画</span></div>
+    <div class="bi" data-v="search" onclick="goV('search')"><span class="bii">🔍</span><span class="bil">搜索</span></div>
+    <div class="bi" data-v="profile" onclick="goV('profile')"><span class="bii">👤</span><span class="bil">我的</span></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+var PROVIDERS=[
+  {n:'DeepSeek',u:'https://api.deepseek.com/v1',m:['deepseek-chat','deepseek-coder','deepseek-reasoner']},
+  {n:'OpenAI',u:'https://api.openai.com/v1',m:['gpt-4o','gpt-4o-mini','gpt-3.5-turbo']},
+  {n:'MiMo',u:'https://api.mimo.xiaomi.com/v1',m:['mimo','mimo-coder']},
+  {n:'通义千问',u:'https://dashscope.aliyuncs.com/compatible-mode/v1',m:['qwen-turbo','qwen-plus','qwen-max']},
+  {n:'Moonshot',u:'https://api.moonshot.cn/v1',m:['moonshot-v1-8k','moonshot-v1-32k','moonshot-v1-128k']},
+  {n:'智谱GLM',u:'https://open.bigmodel.cn/api/paas/v4',m:['glm-4-flash','glm-4','glm-4-plus']},
+  {n:'零一万物',u:'https://api.lingyiwanwu.com/v1',m:['yi-lightning','yi-large']},
+  {n:'自定义',u:'',m:[]}
+];
+var WRITE_PROMPTS=['请写一篇高质量的文章','请写一段吸引人的营销文案','请写一封专业的商务邮件','请写一份正式的公文/通知','请写一篇小红书风格的种草笔记，要有emoji，口语化','请写一条有趣的朋友圈文案','请写一篇新闻稿','请写一个精彩的故事'];
+function el(id){return document.getElementById(id)}
+var STATE={user:null,loggedIn:false,cfg:{pi:0,url:'',key:'',mod:'',cm:'',sys:'你是小宝AI，一个专业、友好的AI助手。请用中文回答。',temp:0.7},stats:{chats:0,tokens:9999,days:1,firstDay:Date.now()},chat:[],generating:false,controller:null,codeMode:0,writeType:0,fileContent:null,fileName:''};
+var deferredInstallPrompt=null;
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredInstallPrompt=e;el('ib').classList.add('show');var mi=el('instmi');if(mi)mi.style.display='flex'});
+window.addEventListener('appinstalled',function(){deferredInstallPrompt=null;el('ib').classList.remove('show');toast('安装成功！','ok')});
+function doInstall(){if(deferredInstallPrompt){deferredInstallPrompt.prompt();deferredInstallPrompt.userChoice.then(function(r){if(r.outcome==='accepted')toast('安装中...','ok');deferredInstallPrompt=null;el('ib').classList.remove('show')})}else{var isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);toast(isIOS?'Safari中：分享按钮→添加到主屏幕':'请用Chrome浏览器，点击地址栏安装图标')}}
+if('serviceWorker' in navigator){try{navigator.serviceWorker.register('sw.js').catch(function(){})}catch(e){}}
+function boot(){
+  try{var d=localStorage.getItem('xb');if(d)STATE=Object.assign(STATE,JSON.parse(d))}catch(e){}
+  if(STATE.stats.firstDay)STATE.stats.days=Math.max(1,Math.ceil((Date.now()-STATE.stats.firstDay)/86400000));
+  renderProviderTabs();updateUI();
+  setTimeout(function(){el('splash').classList.add('out');if(STATE.loggedIn)el('app').classList.add('show');else el('lp').classList.add('show')},2200);
+  if(typeof marked!=='undefined')marked.setOptions({breaks:true,gfm:true});
+  var tin=el('tin');if(tin)tin.addEventListener('input',function(){el('tcnt').textContent=tin.value.length+' 字'});
+}
+function saveState(){try{localStorage.setItem('xb',JSON.stringify({user:STATE.user,loggedIn:STATE.loggedIn,cfg:STATE.cfg,stats:STATE.stats,chat:STATE.chat,codeMode:STATE.codeMode,writeType:STATE.writeType}))}catch(e){}}
+function updateUI(){var m=STATE.cfg.cm||(PROVIDERS[STATE.cfg.pi]?PROVIDERS[STATE.cfg.pi].m[0]:'')||'deepseek-chat';el('hmod').textContent=m;el('htk').textContent=STATE.stats.tokens.toLocaleString();el('gn').textContent=STATE.user?STATE.user.name:'小宝用户';el('gd').textContent=new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'});el('sc1').textContent=STATE.stats.chats;el('sc2').textContent=STATE.stats.tokens.toLocaleString();el('sc3').textContent=STATE.stats.days;el('pnm').textContent=STATE.user?STATE.user.name:'小宝用户';el('pph').textContent=STATE.user?STATE.user.phone:'--';el('ptk').textContent=STATE.stats.tokens.toLocaleString();el('pav').textContent=STATE.user?STATE.user.name[0]:'宝';el('surl').value=STATE.cfg.url||PROVIDERS[STATE.cfg.pi].u;el('skey').value=STATE.cfg.key;el('ssys').value=STATE.cfg.sys;el('stemp').value=STATE.cfg.temp;el('tv').textContent=STATE.cfg.temp;renderModels()}
+function renderModels(){var p=PROVIDERS[STATE.cfg.pi]||PROVIDERS[0];el('smod').innerHTML=p.m.map(function(m){return '<option value="'+m+'" '+(m===(STATE.cfg.mod||p.m[0])?'selected':'')+'>'+m+'</option>'}).join('')}
+function renderProviderTabs(){el('pvt').innerHTML=PROVIDERS.map(function(p,i){return '<span class="pvtb '+(i===STATE.cfg.pi?'on':'')+'" onclick="selectProvider('+i+')">'+p.n+'</span>'}).join('')}
+function selectProvider(i){STATE.cfg.pi=i;var p=PROVIDERS[i];if(p.u)STATE.cfg.url=p.u;if(p.m.length)STATE.cfg.mod=p.m[0];renderProviderTabs();renderModels();el('surl').value=STATE.cfg.url}
+var smsTimer=null;
+function lTab(n){document.querySelectorAll('.ltab').forEach(function(t,i){t.classList.toggle('on',i===n)});el('lsms').style.display=n===0?'block':'none';el('lpw').style.display=n===1?'block':'none'}
+function sendSms(){var phone=el('sp').value.trim();if(!/^1[3-9]\d{9}$/.test(phone))return showLoginError('请输入正确的手机号');var btn=el('smbtn');btn.disabled=true;var s=60;toast('验证码已发送 (演示: 888888)','ok');smsTimer=setInterval(function(){s--;btn.textContent=s+'s';if(s<=0){clearInterval(smsTimer);btn.disabled=false;btn.textContent='获取验证码'}},1000)}
+function doLogin(){var tab=document.querySelector('.ltab.on').textContent.indexOf('验证码')>-1;if(tab){var phone=el('sp').value.trim(),code=el('sc').value.trim();if(!/^1[3-9]\d{9}$/.test(phone))return showLoginError('请输入正确的手机号');if(code!=='888888')return showLoginError('验证码错误');loginSuccess(phone)}else{var phone2=el('pp').value.trim(),pass=el('pw').value;if(!phone2||!pass)return showLoginError('请输入手机号和密码');loginSuccess(phone2)}}
+function loginSuccess(phone){STATE.loggedIn=true;STATE.user={phone:phone,name:'小宝用户'+phone.slice(-4)};saveState();el('lp').classList.remove('show');el('app').classList.add('show');toast('登录成功','ok');updateUI()}
+function logout(){STATE.loggedIn=false;STATE.user=null;saveState();el('app').classList.remove('show');el('lp').classList.add('show')}
+function showLoginError(msg){var err=el('lerr');err.textContent=msg;err.style.display='block';setTimeout(function(){err.style.display='none'},3000)}
+var NAV_VIEWS=['chat','image','write','trans','code','search','file','settings'];
+function goV(v){document.querySelectorAll('.v').forEach(function(x){x.classList.remove('on')});var t=el('v-'+v);if(t)t.classList.add('on');document.querySelectorAll('.bi').forEach(function(x){x.classList.toggle('on',x.dataset.v===v)});el('hback').style.display=NAV_VIEWS.indexOf(v)>-1?'block':'none';if(v==='settings')updateUI()}
+function qc(chip){goV('chat');setTimeout(function(){el('ci').value=chip.textContent;el('ci').focus();tS();sendC()},100)}
+function setCM(n){document.querySelectorAll('.csb button').forEach(function(b,i){b.classList.toggle('on',i===n)});STATE.cfg.mod=['deepseek-chat','deepseek-reasoner','deepseek-coder','deepseek-chat'][n];updateUI()}
+function aR(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,150)+'px'}
+function tS(){el('snd').classList.toggle('on',el('ci').value.trim().length>0)}
+function cK(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendC()}}
+async function sendC(){var inp=el('ci'),text=inp.value.trim();if(!text||STATE.generating)return;if(!STATE.cfg.url||!STATE.cfg.key){toast('请先到设置配置API','err');return}
+STATE.stats.chats++;saveState();el('cw2').classList.add('hide');var list=el('cm');list.classList.add('on');STATE.chat.push({role:'user',content:text,time:Date.now()});list.insertAdjacentHTML('beforeend',renderMsg({role:'user',content:text,time:Date.now()}));inp.value='';aR(inp);tS();
+STATE.generating=true;el('sbp').classList.add('on');var aiDiv=document.createElement('div');aiDiv.innerHTML=renderMsg({role:'assistant',content:'',time:Date.now()});list.appendChild(aiDiv.firstElementChild);scrollChat();
+var messages=[{role:'system',content:STATE.cfg.sys}];STATE.chat.forEach(function(m){messages.push({role:m.role,content:m.content})});
+var model=STATE.cfg.cm||STATE.cfg.mod||PROVIDERS[STATE.cfg.pi].m[0];
+try{STATE.controller=new AbortController();var res=await fetch(STATE.cfg.url.replace(/\/+$/,'')+'/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+STATE.cfg.key},body:JSON.stringify({model:model,messages:messages,stream:true,temperature:STATE.cfg.temp,max_tokens:4096}),signal:STATE.controller.signal});if(!res.ok)throw new Error('API错误 '+res.status);var reader=res.body.getReader(),decoder=new TextDecoder(),buffer='',full='';while(true){var result=await reader.read();if(result.done)break;buffer+=decoder.decode(result.value,{stream:true});var lines=buffer.split('\n');buffer=lines.pop()||'';for(var li=0;li<lines.length;li++){var line=lines[li].trim();if(line.indexOf('data:')!==0)continue;var data=line.slice(5).trim();if(data==='[DONE]')continue;try{var json=JSON.parse(data);var delta=json.choices&&json.choices[0]&&json.choices[0].delta&&json.choices[0].delta.content||'';if(delta){full+=delta;updateLastAI(full)}}catch(ex){}}}STATE.chat.push({role:'assistant',content:full||'(无内容)',time:Date.now()});finalizeLastAI(full||'(无内容)')}catch(e){if(e.name!=='AbortError'){var els=list.querySelectorAll('.m.a');var last=els[els.length-1];if(last)last.querySelector('.mc').innerHTML=renderMD('❌ '+e.message)}STATE.chat.push({role:'assistant',content:e.name==='AbortError'?'(已停止)':'❌ '+e.message,time:Date.now()})}finally{STATE.generating=false;STATE.controller=null;el('sbp').classList.remove('on');saveState()}}
+function stopG(){if(STATE.controller)STATE.controller.abort()}
+function renderMsg(m){var isUser=m.role==='user';var time=m.time?new Date(m.time).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}):'';var content=isUser?escapeHtml(m.content):renderMD(m.content);return '<div class="m '+(isUser?'u':'a')+'"><div class="mi"><div class="ma">'+(isUser?(STATE.user?STATE.user.name[0]:'你'):'宝')+'</div><div class="mb"><div class="mm">'+(isUser?'':'小宝AI')+' '+time+'</div><div class="mc">'+content+'</div></div></div></div>'}
+function renderMD(text){if(!text)return'';try{var html=typeof marked!=='undefined'?marked.parse(text):text.replace(/\n/g,'<br>');html=html.replace(/<pre><code class="language-(\w+)">/g,function(m,lang){return '<pre><div class="ch"><span class="cl">'+lang+'</span><button class="cb" onclick="copyCode(this)">复制</button></div><code class="language-'+lang+' hljs">'});html=html.replace(/<pre><code>/g,'<pre><div class="ch"><span class="cl">code</span><button class="cb" onclick="copyCode(this)">复制</button></div><code class="hljs">');return html}catch(e){return text.replace(/\n/g,'<br>')}}
+function updateLastAI(content){var els=el('cm').querySelectorAll('.m.a');if(!els.length)return;els[els.length-1].querySelector('.mc').innerHTML=renderMD(content)+'<span class="blink"></span>';scrollChat()}
+function finalizeLastAI(content){var els=el('cm').querySelectorAll('.m.a');if(!els.length)return;els[els.length-1].querySelector('.mc').innerHTML=renderMD(content);scrollChat()}
+function scrollChat(){var c=el('cc2');requestAnimationFrame(function(){c.scrollTop=c.scrollHeight})}
+function copyCode(btn){navigator.clipboard.writeText(btn.closest('pre').querySelector('code').textContent).then(function(){btn.textContent='✓';setTimeout(function(){btn.textContent='复制'},1500)})}
+async function genImg(){var prompt=el('ipr').value.trim();if(!prompt)return toast('请输入图片描述','err');if(!STATE.cfg.url||!STATE.cfg.key)return toast('请先配置API','err');if(STATE.stats.tokens<100)return toast('Token不足','err');var btn=el('igb');btn.disabled=true;btn.textContent='⏳ 生成中...';try{var res=await fetch(STATE.cfg.url.replace(/\/+$/,'')+'/images/generations',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+STATE.cfg.key},body:JSON.stringify({model:'dall-e-3',prompt:prompt,n:1,size:el('isz').value,style:el('ist').value,response_format:'url'})});if(!res.ok)throw new Error('API错误 '+res.status);var data=await res.json();var url=data.data&&data.data[0]&&data.data[0].url;if(!url)throw new Error('未返回图片');STATE.stats.tokens-=100;saveState();updateUI();el('ires').innerHTML='<div class="ic"><img src="'+url+'"><div class="ia"><button onclick="window.open(\''+url+'\')">下载</button></div></div>'+el('ires').innerHTML;toast('生成成功！','ok')}catch(e){toast('失败: '+e.message,'err')}finally{btn.disabled=false;btn.textContent='🎨 生成图片'}}
+function setWT(n){STATE.writeType=n;document.querySelectorAll('.wt').forEach(function(t,i){t.classList.toggle('on',i===n)})}
+async function genW(){var topic=el('wtp').value.trim();if(!topic)return toast('请输入主题','err');if(!STATE.cfg.url||!STATE.cfg.key)return toast('请先配置API','err');var out=el('wres');out.textContent='⏳ 生成中...';try{var r=await aiGenerate(WRITE_PROMPTS[STATE.writeType]+'\n\n主题：'+topic+'\n'+(el('wdesc').value.trim()?'要求：'+el('wdesc').value.trim()+'\n':'')+'语言：'+el('wlg').value+'\n\n直接输出内容。','你是专业写作助手。');out.innerHTML=renderMD(r);STATE.stats.chats++;saveState()}catch(e){out.textContent='❌ '+e.message}}
+function swL(){var f=el('tf'),t=el('tt'),tmp=f.value;f.value=t.value;t.value=tmp}
+async function genT(){var text=el('tin').value.trim();if(!text)return toast('请输入文本','err');if(!STATE.cfg.url||!STATE.cfg.key)return toast('请先配置API','err');var out=el('tout');out.value='翻译中...';try{var r=await aiGenerate('将'+el('tf').value+'翻译为'+el('tt').value+'，只输出翻译：\n\n'+text,'你是专业翻译。');out.value=r;el('trl').textContent=el('tt').value;STATE.stats.chats++;saveState()}catch(e){out.value='❌ '+e.message}}
+function setCD(n){STATE.codeMode=n;document.querySelectorAll('.cmd').forEach(function(t,i){t.classList.toggle('on',i===n)})}
+async function genC(){var input=el('cin').value.trim();if(!input)return toast('请输入内容','err');if(!STATE.cfg.url||!STATE.cfg.key)return toast('请先配置API','err');var lang=el('clg').value,modes=['用'+lang+'生成代码','解释代码','找bug并修复','优化代码','转换为'+lang,'写单元测试'];var out=el('cout');out.textContent='⏳ 处理中...';try{var r=await aiGenerate(modes[STATE.codeMode]+'：\n\n'+input+'\n\n用markdown代码块输出。','你是高级软件工程师。');out.innerHTML=renderMD(r);STATE.stats.chats++;saveState()}catch(e){out.textContent='❌ '+e.message}}
+async function genS(){var q=el('sin').value.trim();if(!q)return;if(!STATE.cfg.url||!STATE.cfg.key)return toast('请先配置API','err');var out=el('sout');out.textContent='⏳ 搜索中...';try{var r=await aiGenerate('请详细回答：'+q,'你是搜索助手，用markdown输出。');out.innerHTML=renderMD(r);STATE.stats.chats++;saveState()}catch(e){out.textContent='❌ '+e.message}}
+function hFile(e){var f=e.target.files[0];if(!f)return;if(f.size>10*1024*1024)return toast('文件过大','err');var reader=new FileReader();reader.onload=function(ev){STATE.fileContent=ev.target.result;STATE.fileName=f.name;el('finfo').classList.add('show');el('fn2').textContent=f.name;el('fs2').textContent=(f.size/1024).toFixed(1)+'KB';toast('已加载','ok')};reader.readAsText(f)}
+function cFile(){STATE.fileContent=null;STATE.fileName='';el('finfo').classList.remove('show');el('fin').value=''}
+async function genF(){if(!STATE.fileContent)return toast('请先上传','err');if(!STATE.cfg.url||!STATE.cfg.key)return toast('请先配置API','err');var q=el('fq').value.trim(),out=el('fr');out.textContent='⏳ 分析中...';var c=STATE.fileContent.substring(0,8000);var prompt=q?'文件"'+STATE.fileName+'"：\n```\n'+c+'\n```\n\n问题：'+q:'分析文件"'+STATE.fileName+'"：\n```\n'+c+'\n```';try{var r=await aiGenerate(prompt,'你是文档分析专家。');out.innerHTML=renderMD(r);STATE.stats.chats++;saveState()}catch(e){out.textContent='❌ '+e.message}}
+async function aiGenerate(prompt,sys){var model=STATE.cfg.cm||STATE.cfg.mod||PROVIDERS[STATE.cfg.pi].m[0];var res=await fetch(STATE.cfg.url.replace(/\/+$/,'')+'/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+STATE.cfg.key},body:JSON.stringify({model:model,messages:[{role:'system',content:sys||STATE.cfg.sys},{role:'user',content:prompt}],temperature:STATE.cfg.temp,max_tokens:4096})});if(!res.ok)throw new Error('API错误 '+res.status);var data=await res.json();return data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content||'(无返回)'}
+function saveC(){STATE.cfg.url=el('surl').value.trim();STATE.cfg.key=el('skey').value.trim();STATE.cfg.mod=el('smod').value;STATE.cfg.cm=el('scmod').value.trim();STATE.cfg.sys=el('ssys').value.trim();STATE.cfg.temp=parseFloat(el('stemp').value);saveState();updateUI();toast('已保存','ok')}
+async function testA(){var url=el('surl').value.trim().replace(/\/+$/,''),key=el('skey').value.trim();var model=el('scmod').value.trim()||el('smod').value;if(!url||!key)return toast('请填写API','err');toast('测试中...');try{var r=await fetch(url+'/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:model,messages:[{role:'user',content:'hi'}],max_tokens:5})});toast(r.ok?'连接成功 ✓':'失败 '+r.status,r.ok?'ok':'err')}catch(e){toast('错误: '+e.message,'err')}}
+function escapeHtml(str){var div=document.createElement('div');div.textContent=str;return div.innerHTML}
+function toast(msg,type){var t=el('toast');t.textContent=msg;t.className='on '+(type||'');setTimeout(function(){t.className=''},2500)}
+function cpT(v){navigator.clipboard.writeText(v).then(function(){toast('已复制','ok')})}
+document.addEventListener('DOMContentLoaded',boot);
+</script>
+</body>
+</html>
